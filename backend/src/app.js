@@ -30,7 +30,14 @@ app.use(morgan("dev"));
 
 app.use("/api/v1", require("./routes"));
 app.use("/api/v1/auth", require("./routes/auth.routes"));
-
+app.use("/api/v1/employees", require("./routes/employee.routes"));
+app.use("/api/v1/products",require("./routes/product.routes"));
+app.use("/api/v1/purchases",require("./routes/purchase.routes"));
+app.use("/api/v1/dashboard", require("./routes/dashboard.routes"));
+app.use("/api/v1/sales",require("./routes/sale.routes"));
+app.use("/api/v1/documents",require("./routes/document.routes"));
+app.use("/api/v1/reports", require("./routes/report.routes"));
+app.use("/api/v1/ai", require("./routes/ai.routes"));
 // =======================
 // 404 Handler
 // =======================

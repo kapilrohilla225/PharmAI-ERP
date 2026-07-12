@@ -22,8 +22,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const data = await authService.login(req.body);
 
-    return res
+    res
         .status(200)
+        .cookie("token", data.token, {
+            httpOnly: true,
+            secure: false, // true after deployment with HTTPS
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
         .json(
             new ApiResponse(
                 200,
