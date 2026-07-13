@@ -21,7 +21,7 @@ const createEmployee = asyncHandler(async (req, res) => {
 
 const getEmployees = asyncHandler(async (req, res) => {
 
-    const employees = await employeeService.getEmployees();
+    const employees = await employeeService.getEmployees(req.query);
 
     res.status(200).json(
         new ApiResponse(

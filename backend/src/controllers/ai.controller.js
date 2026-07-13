@@ -7,6 +7,7 @@ const Product = require("../models/Product");
 const Sale = require("../models/Sale");
 const dashboardService = require("../services/dashboard.service");
 const Purchase = require("../models/Purchase");
+const auditService = require("../services/audit.service");
 
 exports.chat = asyncHandler(async (req, res) => {
 
@@ -29,6 +30,13 @@ exports.inventoryAI = asyncHandler(async (req, res) => {
     const products = await Product.find();
 
     const answer = await aiService.inventoryAnalysis(products);
+
+    await auditService.createLog({
+    user: req.user._id,
+    module: "AI",
+    action: "Generate",
+    description: "AI generated inventory analysis"
+    });
 
     res.status(200).json(
         new ApiResponse(

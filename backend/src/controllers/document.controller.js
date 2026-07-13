@@ -4,6 +4,8 @@ const ApiResponse=require("../utils/ApiResponse");
 
 const service=require("../services/document.service");
 
+const auditService = require("../services/audit.service");
+
 exports.uploadDocument=asyncHandler(async(req,res)=>{
 
 if (!req.file) {
@@ -19,6 +21,13 @@ const doc = await service.uploadDocument(
     req.body.title,
     console.log(req.file),
 );
+
+await auditService.createLog({
+    user: req.user._id,
+    module: "Document",
+    action: "Upload",
+    description: `${doc.title} uploaded`
+});
 
 res.status(201).json(
 

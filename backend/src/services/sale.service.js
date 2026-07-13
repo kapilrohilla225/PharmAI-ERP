@@ -1,50 +1,76 @@
 const Sale=require("../models/Sale");
 const Product=require("../models/Product");
 const ApiError=require("../utils/ApiError");
+const generateCode = require("../utils/generateCode");
+const auditService=require("../services/audit.service");
 
-const createSale=async(data,user)=>{
+const createSale = async (data, user) => {
 
-const product=await Product.findById(data.product);
+    const product = await Product.findById(data.product);
 
-if(!product){
+    if (!product) {
+        throw new ApiError(404, "Product Not Found");
+    }
 
-throw new ApiError(404,"Product Not Found");
+    const invoiceNumber = await generateCode(
+        Sale,
+        "invoiceNumber",
+        "INV"
+    );
 
-}
+    if (product.quantity < data.quantity) {
+        throw new ApiError(400, "Insufficient Stock");
+    }
 
-if(product.quantity<data.quantity){
+    product.quantity -= Number(data.quantity);
 
-throw new ApiError(400,"Insufficient Stock");
+    await product.save();
 
-}
+    const sale = await Sale.create({
 
-product.quantity-=Number(data.quantity);
+        ...data,
 
-await product.save();
+        invoiceNumber,
 
-const sale=await Sale.create({
+        totalAmount: Number(data.quantity) * Number(data.sellingPrice),
 
-...data,
+        createdBy: user
 
-totalAmount:data.quantity*data.sellingPrice,
+    });
 
-createdBy:user
+    await auditService.createLog({
+    user,
+    module: "Sales",
+    action: "Create",
+    description: `Invoice ${sale.invoiceNumber} generated`
+    });
 
-});
+    return sale;
+};
 
-return sale;
+const getSales = async () => {
+
+    return await Sale.find()
+        .populate("product")
+        .sort({ createdAt: -1 });
 
 };
 
-const getSales=async()=>{
+const getSaleById = async (id) => {
 
-return await Sale.find()
-.populate("product")
-.sort({createdAt:-1});
+    const sale = await Sale.findById(id)
+        .populate("product");
+
+    if (!sale) {
+        throw new ApiError(404, "Sale Not Found");
+    }
+
+    return sale;
 
 };
 
-module.exports={
-createSale,
-getSales
+module.exports = {
+    createSale,
+    getSales,
+    getSaleById
 };

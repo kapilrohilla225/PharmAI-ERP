@@ -1,40 +1,59 @@
-const Purchase=require("../models/Purchase");
-const Product=require("../models/Product");
-const ApiError=require("../utils/ApiError");
+const Purchase = require("../models/Purchase");
+const Product = require("../models/Product");
+const ApiError = require("../utils/ApiError");
+const generateCode = require("../utils/generateCode");
+const auditService=require("../services/audit.service");
 
-const createPurchase=async(data,user)=>{
+const createPurchase = async (data, user) => {
 
-    const product=await Product.findById(data.product);
+    const product = await Product.findById(data.product);
 
-    if(!product){
-        throw new ApiError(404,"Product Not Found");
+    if (!product) {
+        throw new ApiError(404, "Product Not Found");
     }
 
-    product.quantity+=Number(data.quantity);
+    const purchaseNumber = await generateCode(
+        Purchase,
+        "purchaseNumber",
+        "PUR"
+    );
+
+    product.quantity += Number(data.quantity);
 
     await product.save();
 
-    return await Purchase.create({
+    await auditService.createLog({
+    user,
+    module: "Purchase",
+    action: "Create",
+    description: `Purchase ${purchase.purchaseNumber} created`
+    });
 
-        ...data,
+    await auditService.createLog({
 
-        totalAmount:data.quantity*data.purchasePrice,
+    user,
 
-        createdBy:user
+    module:"Purchase",
+
+    action:"Create",
+
+    description:`Purchase ${purchase.purchaseNumber} Created`
 
     });
 
+    return purchase;
+
 };
 
-const getPurchases=async()=>{
+const getPurchases = async () => {
 
     return await Purchase.find()
-    .populate("product")
-    .sort({createdAt:-1});
+        .populate("product")
+        .sort({ createdAt: -1 });
 
 };
 
-module.exports={
-createPurchase,
-getPurchases
+module.exports = {
+    createPurchase,
+    getPurchases
 };

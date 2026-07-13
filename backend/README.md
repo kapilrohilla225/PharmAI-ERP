@@ -1,29 +1,145 @@
-```md
-# Pharma ERP Backend
+# Gloss Pharma ERP - Backend
 
-A production-ready backend for a Pharmaceutical ERP system built with Node.js, Express.js, and MongoDB Atlas.
+## Overview
+
+Gloss Pharma ERP Backend is a RESTful API built using the MERN stack. It is designed to manage pharmaceutical inventory, employees, purchases, sales, reports, documents, and AI-powered assistance with secure authentication and role-based access control.
 
 ---
 
 ## Tech Stack
 
-- Node.js
-- Express.js
-- MongoDB Atlas
-- Mongoose
-- JWT Authentication
-- bcrypt
-- Helmet
-- CORS
-- Morgan
-- Cookie Parser
+* Node.js
+* Express.js
+* MongoDB Atlas
+* Mongoose
+* JWT Authentication
+* Cloudinary
+* Google Gemini AI
+* Nodemailer
+* Multer
+* Swagger
+* ExcelJS
+* PDFKit
 
 ---
 
-## Project Structure
+## Features
+
+### Authentication
+
+* User Registration
+* Secure Login
+* JWT Authentication
+* Role-Based Access Control (RBAC)
+* Forgot Password (OTP)
+* Verify OTP
+* Reset Password
+* Email Notifications
+
+### Employee Management
+
+* Create Employee
+* Update Employee
+* Delete Employee
+* Employee Search
+* Pagination
+
+### Product Management
+
+* Create Product
+* Update Product
+* Delete Product
+* Stock Management
+* Batch Number Management
+* Expiry Date Management
+* Product Search
+* Pagination
+
+### Purchase Management
+
+* Purchase Entry
+* Purchase Number Auto Generation
+* Supplier Management
+* Inventory Auto Update
+
+### Sales Management
+
+* Sales Invoice Generation
+* Invoice Number Auto Generation
+* Customer Management
+* Inventory Auto Deduction
+
+### Inventory
+
+* Live Stock Tracking
+* Minimum Stock Monitoring
+* Low Stock Alerts
+
+### Reports
+
+* Sales Reports
+* Purchase Reports
+* Inventory Reports
+* Dashboard Statistics
+
+### Documents
+
+* File Upload
+* Cloudinary Integration
+* Document Management
+
+### AI Assistant
+
+* Google Gemini Integration
+* ERP Query Assistant
+
+### Export
+
+* PDF Invoice Generation
+* Excel Report Export
+
+### System
+
+* Company Settings
+* Audit Logs
+* Health Check API
+* System Information API
+* Swagger API Documentation
+
+---
+
+## API Modules
+
+* Authentication
+* Employees
+* Products
+* Purchases
+* Sales
+* Reports
+* Dashboard
+* AI Assistant
+* Documents
+* Notifications
+* Settings
+* Audit Logs
+
+---
+
+## Security
+
+* JWT Authentication
+* Password Hashing (bcrypt)
+* Protected Routes
+* Role-Based Authorization
+* OTP Verification
+* Environment Variables
+* Input Validation
+
+---
+
+## Folder Structure
 
 ```
-
 backend/
 │
 ├── src/
@@ -35,180 +151,86 @@ backend/
 │   ├── services/
 │   ├── utils/
 │   ├── validators/
+│   ├── seed/
 │   ├── app.js
 │   └── server.js
 │
-├── .env
-├── .env.example
-├── .gitignore
+├── uploads/
 ├── package.json
-└── README.md
-
-````
-
----
-
-## Features
-
-- User Authentication (JWT)
-- Role Based Access Control
-- Employee Management
-- Inventory Management
-- Supplier Management
-- Dashboard APIs
-- Document Management
-- Reports
-- Global Error Handling
-- Common API Response Format
-- MongoDB Atlas Integration
+└── .env
+```
 
 ---
 
 ## Installation
 
-Clone the repository
-
 ```bash
 git clone <repository-url>
-````
 
-Move into the backend folder
-
-```bash
 cd backend
-```
 
-Install dependencies
-
-```bash
 npm install
+
+npm run dev
 ```
 
 ---
 
 ## Environment Variables
 
-Create a `.env` file in the root directory.
+Create a `.env` file and configure:
 
-```
-PORT=5000
-
-MONGODB_URI=your_mongodb_connection_string
-
-JWT_SECRET=your_secret_key
-
-JWT_EXPIRES_IN=7d
-```
-
----
-
-## Run Project
-
-Development
-
-```bash
-npm run dev
-```
-
-Production
-
-```bash
-npm start
-```
+* PORT
+* MONGODB_URI
+* ACCESS_TOKEN_SECRET
+* ACCESS_TOKEN_EXPIRY
+* REFRESH_TOKEN_SECRET
+* REFRESH_TOKEN_EXPIRY
+* CLOUDINARY_CLOUD_NAME
+* CLOUDINARY_API_KEY
+* CLOUDINARY_API_SECRET
+* GEMINI_API_KEY
+* SMTP_HOST
+* SMTP_PORT
+* SMTP_EMAIL
+* SMTP_PASSWORD
 
 ---
 
-## API Base URL
+## Current Status
 
-```
-http://localhost:5000/api/v1
-```
+**Backend Version:** v1.0
 
----
-
-## Current Modules
+### Completed Modules
 
 * Authentication
-* Employee
-* Inventory
-* Supplier
+* Employee Management
+* Product Management
+* Purchase Management
+* Sales Management
+* Inventory Management
 * Dashboard
 * Reports
-* Documents
+* AI Integration
+* Document Upload
+* Email Service
+* OTP Verification
+* PDF Invoice
+* Excel Export
+* Notifications
+* Settings
+* Audit Logs
+* Swagger Documentation
 
 ---
 
-## Folder Responsibilities
+## Future Enhancements
 
-### config
-
-Database configuration and application constants.
-
-### controllers
-
-Handle incoming requests and return responses.
-
-### middlewares
-
-Authentication, authorization, validation, and error handling.
-
-### models
-
-MongoDB schemas and models.
-
-### routes
-
-API endpoints.
-
-### services
-
-Business logic.
-
-### utils
-
-Reusable helper functions and common utilities.
-
-### validators
-
-Request validation.
-
----
-
-## API Response Format
-
-Success
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "Success",
-  "data": {}
-}
-```
-
-Error
-
-```json
-{
-  "success": false,
-  "statusCode": 400,
-  "message": "Something went wrong"
-}
-```
-
----
-
-## Development Rules
-
-* Follow MVC Architecture.
-* Keep controllers thin.
-* Put business logic inside services.
-* Store secrets in `.env`.
-* Use MongoDB Atlas.
-* Write reusable code.
-* Maintain clean folder structure.
-* Commit changes after each completed module.
+* Google Login
+* Refresh Token Auto Rotation
+* Multi-Factor Authentication (MFA)
+* Advanced Analytics Dashboard
+* Docker Deployment
 
 ---
 
@@ -220,5 +242,4 @@ Web Developer Intern
 
 Gloss Pharmaceuticals Pvt. Ltd.
 
-```
-```
+Built with Node.js, Express.js, MongoDB, and modern backend architecture.

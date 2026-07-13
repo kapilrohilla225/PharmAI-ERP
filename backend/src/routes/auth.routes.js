@@ -7,6 +7,10 @@ const protect = require("../middlewares/auth.middleware");
 const {
     registerUser,
     loginUser,
+    forgotPassword,
+    verifyOtp,
+    resetPassword,
+    refreshToken
 } = require("../controllers/auth.controller");
 
 router.post("/register", registerUser);
@@ -22,5 +26,22 @@ router.get("/me", protect, (req, res) => {
     });
 
 });
+
+router.post(
+    "/forgot-password",
+    forgotPassword
+);
+
+router.post(
+    "/verify-otp",
+    verifyOtp
+);
+
+router.post(
+    "/reset-password",
+    resetPassword
+);
+
+router.post("/refresh-token",refreshToken);
 
 module.exports = router;

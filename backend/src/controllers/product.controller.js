@@ -13,7 +13,7 @@ res.status(201).json(new ApiResponse(201,"Product Created",product));
 
 exports.getProducts=asyncHandler(async(req,res)=>{
 
-const products=await productService.getProducts();
+const products=await productService.getProducts(req.query);
 
 res.status(200).json(new ApiResponse(200,"Products",products));
 
