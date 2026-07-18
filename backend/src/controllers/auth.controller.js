@@ -12,16 +12,18 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, "User Registered Successfully", user));
 });
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+};
+
 const loginUser = asyncHandler(async (req, res) => {
   const data = await authService.login(req.body);
 
   res
     .status(200)
-    .cookie("refreshToken", data.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    })
+    .cookie("refreshToken", data.refreshToken, cookieOptions)
     .json(
       new ApiResponse(200, "Login Successful", {
         user: data.user,
@@ -119,11 +121,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await authService.logout(req.user._id);
   res
     .status(200)
-    .clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    })
+    .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, "Logged out successfully"));
 });
 
@@ -137,11 +135,7 @@ const googleCallback = asyncHandler(async (req, res) => {
 
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
   res
-    .cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    })
+    .cookie("refreshToken", newRefreshToken, cookieOptions)
     .redirect(
       `${frontendUrl}/auth/google/success?accessToken=${accessToken}`
     );
