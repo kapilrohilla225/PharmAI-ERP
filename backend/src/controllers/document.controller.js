@@ -19,7 +19,6 @@ const doc = await service.uploadDocument(
     req.file,
     req.user._id,
     req.body.title,
-    console.log(req.file),
 );
 
 await auditService.createLog({

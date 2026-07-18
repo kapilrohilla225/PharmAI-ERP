@@ -1,18 +1,2 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  background-color: #f8f9fa;
-}
-
-a {
-  text-decoration: none;
-}
-
-ul {
-  list-style: none;
-}
+@import "tailwindcss";
+@import "./styles/theme.css";

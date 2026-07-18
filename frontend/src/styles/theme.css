@@ -1,0 +1,165 @@
+/*
+ * ═══════════════════════════════════════════════════════════
+ *  PHARMA ERP – THEME SYSTEM
+ *  Strategy: Override Tailwind v4's internal CSS custom
+ *  properties so every component automatically adapts
+ *  with zero code changes.
+ *
+ *  Tailwind v4 resolves:
+ *    bg-slate-950  → var(--color-slate-950)
+ *    text-white    → var(--color-white)
+ *    border-slate-800 → var(--color-slate-800)
+ *  …so remapping those vars = full-app theming instantly.
+ * ═══════════════════════════════════════════════════════════
+ */
+
+/* ── Global transition so theme switch is smooth ──────── */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.25s ease,
+    border-color     0.25s ease,
+    color            0.18s ease;
+}
+/* Don't transition transforms/animations */
+.animate-spin,
+.animate-pulse,
+[class*="motion"] {
+  transition: none;
+}
+
+/* ── DARK (default) ───────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --color-slate-950: oklch(0.129 0.042 264.695);
+  --color-slate-900: oklch(0.208 0.042 265.755);
+  --color-slate-800: oklch(0.279 0.041 260.031);
+  --color-slate-700: oklch(0.372 0.044 257.287);
+
+  /* Text */
+  --color-white:     oklch(1 0 0);
+  --color-slate-300: oklch(0.869 0.022 252.894);
+  --color-slate-400: oklch(0.704 0.04  256.788);
+  --color-slate-500: oklch(0.554 0.046 257.417);
+  --color-slate-600: oklch(0.446 0.043 257.281);
+}
+
+/* ── LIGHT ────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /*
+   * Flip the slate background scale:
+   *   slate-950 (main bg)   → near-white  #f8fafc
+   *   slate-900 (card bg)   → white       #ffffff
+   *   slate-800 (elevated)  → slate-100   #f1f5f9
+   *   slate-700 (hover/active) → slate-200 #e2e8f0
+   */
+  --color-slate-950: oklch(0.984 0.003 247.858);  /* ≈ slate-50  */
+  --color-slate-900: oklch(1     0     0        );  /* white       */
+  --color-slate-800: oklch(0.968 0.007 247.896  );  /* ≈ slate-100 */
+  --color-slate-700: oklch(0.929 0.013 255.508  );  /* ≈ slate-200 */
+
+  /*
+   * Flip text colours:
+   *   text-white    → very dark (slate-900 tone)
+   *   text-slate-300/400 → readable dark grey
+   *   text-slate-500 → medium grey (stays readable)
+   */
+  --color-white:     oklch(0.208 0.042 265.755);   /* ≈ slate-900  */
+  --color-slate-100: oklch(0.372 0.044 257.287);   /* ≈ slate-700  */
+  --color-slate-200: oklch(0.446 0.043 257.281);   /* ≈ slate-600  */
+  --color-slate-300: oklch(0.446 0.043 257.281);   /* ≈ slate-600  */
+  --color-slate-400: oklch(0.372 0.044 257.287);   /* ≈ slate-700  */
+  --color-slate-500: oklch(0.554 0.046 257.417);   /* stays ~same  */
+  --color-slate-600: oklch(0.704 0.04  256.788);   /* ≈ slate-400  */
+}
+
+/* ── body baseline ────────────────────────────────────── */
+body {
+  background-color: var(--color-slate-950);
+  color: var(--color-white);
+}
+
+/* ── Light-mode specific fixes ────────────────────────── */
+
+/* Glassmorphism backgrounds that use / opacity modifier */
+[data-theme="light"] .backdrop-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Borders: ensure light-mode borders are visible */
+[data-theme="light"] [class*="border-slate-800"] {
+  border-color: oklch(0.929 0.013 255.508) !important; /* slate-200 */
+}
+[data-theme="light"] [class*="border-slate-700"] {
+  border-color: oklch(0.869 0.022 252.894) !important; /* slate-300 */
+}
+
+/* Shadow: dark box-shadows look odd on white bg */
+[data-theme="light"] .shadow-black\/20,
+[data-theme="light"] [class*="shadow-black"] {
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Radial gradient hero bg — make subtle in light mode */
+[data-theme="light"] [class*="radial-gradient"] {
+  opacity: 0.05;
+}
+
+/* Gradient overlay on layout */
+[data-theme="light"] .pointer-events-none.absolute.inset-0 {
+  opacity: 0 !important;
+}
+
+/* Accent / status badge colours should stay vivid — don't override them */
+/* (blue, emerald, rose, amber, sky, orange, purple colours untouched) */
+
+/* Input / Select placeholder */
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: oklch(0.554 0.046 257.417); /* slate-500 */
+}
+
+/* Scrollbar in light mode */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: oklch(0.968 0.007 247.896);
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: oklch(0.869 0.022 252.894);
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.704 0.04 256.788);
+}
+
+/* SweetAlert2 in light mode */
+[data-theme="light"] .swal2-popup {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* ── Custom Keyframes ──────────────────────────────────── */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

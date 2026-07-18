@@ -6,6 +6,8 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const compression=require("compression");
+const { generalLimiter } = require("./middlewares/rateLimit.middleware");
+const passport = require("./config/passport");
 const app = express();
 const errorHandler = require("./middlewares/error.middleware");
 
@@ -13,7 +15,12 @@ const errorHandler = require("./middlewares/error.middleware");
 // Global Middlewares
 // =======================
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 app.use(helmet());
 
@@ -26,6 +33,10 @@ app.use(cookieParser());
 app.use(compression());
 
 app.use(morgan("dev"));
+
+app.use(generalLimiter);
+
+app.use(passport.initialize());
 
 // =======================
 // Routes
@@ -49,6 +60,8 @@ app.use("/api/v1/excel", require("./routes/excel.routes"));
 app.use("/api/v1/notifications",require("./routes/notification.routes"));
 app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec));
 app.use("/api/v1/system",require("./routes/system.routes"));
+app.use("/api/v1/suppliers", require("./routes/supplier.routes"));
+app.use("/api/v1/inventory", require("./routes/inventory.routes"));
 
 //api route 
 app.get("/api", (req, res) => {
@@ -65,6 +78,8 @@ app.get("/api", (req, res) => {
             auth: "/api/v1/auth",
             employees: "/api/v1/employees",
             products: "/api/v1/products",
+            suppliers: "/api/v1/suppliers",
+            inventory: "/api/v1/inventory",
             purchases: "/api/v1/purchases",
             sales: "/api/v1/sales",
             dashboard: "/api/v1/dashboard",

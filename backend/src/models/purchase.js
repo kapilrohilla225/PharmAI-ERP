@@ -51,7 +51,7 @@ const purchaseSchema = new mongoose.Schema(
 
     paymentStatus:{
         type:String,
-        enum:["Pending","Paid"],
+        enum:["Pending","Paid","Partial"],
         default:"Pending"
     },
 

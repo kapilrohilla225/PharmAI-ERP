@@ -1,9 +1,11 @@
 const asyncHandler = require("../utils/asyncHandler");
 const authService = require("../services/auth.service");
 const ApiResponse = require("../utils/ApiResponse");
+const generateToken = require("../utils/generateToken");
+const generateRefreshToken = require("../utils/generateRefreshToken");
 
 const registerUser = asyncHandler(async (req, res) => {
-  const user = await authService.register(req.body);
+  const user = await authService.register(req.body, req.user);
 
   return res
     .status(201)
@@ -17,10 +19,9 @@ const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("refreshToken", data.refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     })
-    .status(200)
     .json(
       new ApiResponse(200, "Login Successful", {
         user: data.user,
@@ -99,11 +100,82 @@ const refreshToken = asyncHandler(async (req, res) => {
   );
 });
 
+const updateProfile = asyncHandler(async (req, res) => {
+  const updatedUser = await authService.updateProfile(req.user._id, req.body, req.file);
+  res.status(200).json(new ApiResponse(200, "Profile updated successfully", updatedUser));
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    res.status(400);
+    throw new Error("Old and new passwords are required");
+  }
+  await authService.changePassword(req.user._id, oldPassword, newPassword);
+  res.status(200).json(new ApiResponse(200, "Password changed successfully"));
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  await authService.logout(req.user._id);
+  res
+    .status(200)
+    .clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    })
+    .json(new ApiResponse(200, "Logged out successfully"));
+});
+
+const googleCallback = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const accessToken = generateToken(user);
+  const newRefreshToken = generateRefreshToken(user);
+
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  res
+    .cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    })
+    .redirect(
+      `${frontendUrl}/auth/google/success?accessToken=${accessToken}`
+    );
+});
+
+const demoLogin = asyncHandler(async (req, res) => {
+  const { role } = req.body;
+  const { user, accessToken } = await authService.demoLogin(role);
+
+  res.status(200).json(
+    new ApiResponse(200, `Exploring as ${role}`, {
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        isDefaultAdmin: user.isDefaultAdmin,
+      },
+      accessToken,
+    })
+  );
+});
+
 module.exports = {
   registerUser,
   loginUser,
   forgotPassword,
   verifyOtp,
   resetPassword,
-  refreshToken
+  refreshToken,
+  updateProfile,
+  changePassword,
+  logoutUser,
+  googleCallback,
+  demoLogin,
 };

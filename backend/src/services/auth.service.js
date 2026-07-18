@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
 const generateToken = require("../utils/generateToken");
@@ -6,7 +7,7 @@ const { sendEmail } = require("./email.service");
 const bcrypt = require("bcrypt");
 const generateRefreshToken=require("../utils/generateRefreshToken");
 
-const register = async ({ fullName, email, password, role }) => {
+const register = async ({ fullName, email, password, role }, creator) => {
 
     const existingUser = await User.findOne({ email });
 
@@ -14,11 +15,30 @@ const register = async ({ fullName, email, password, role }) => {
         throw new ApiError(409, "User already exists");
     }
 
+    if (!creator) {
+        throw new ApiError(403, "Registration is restricted to authorized staff");
+    }
+
+    const requestedRole = role || "employee";
+
+    if (creator.role === "admin") {
+        if (requestedRole !== "admin") {
+            throw new ApiError(403, "Administrators can only create admin users");
+        }
+    } else if (creator.role === "hr") {
+        if (!["hr", "employee"].includes(requestedRole)) {
+            throw new ApiError(403, "HR can only create HR or employee users");
+        }
+    } else {
+        throw new ApiError(403, "You are not authorized to create users");
+    }
+
     const user = await User.create({
         fullName,
         email,
         password,
-        role,
+        role: requestedRole,
+        isDefaultAdmin: false,
     });
 
     const createdUser = await User.findById(user._id).select("-password");
@@ -222,11 +242,87 @@ const refreshAccessToken = async (refreshToken) => {
 
 };
 
+const updateProfile = async (userId, data, file) => {
+    const user = await User.findById(userId);
+    if (!user) throw new ApiError(404, "User not found");
+
+    if (user.isDefaultAdmin) {
+        throw new ApiError(403, "Default Admin details are locked and cannot be edited.");
+    }
+
+    if (data.fullName) user.fullName = data.fullName;
+    if (data.phone !== undefined) user.phone = data.phone;
+    
+    // Check if avatar needs to be removed
+    if (data.removeAvatar === "true") {
+        user.avatar = "";
+    } else if (file) {
+        user.avatar = file.path; // Cloudinary URL
+    }
+
+    await user.save();
+    return await User.findById(user._id).select("-password -refreshToken -resetOtp -resetOtpExpiry");
+};
+
+const changePassword = async (userId, oldPassword, newPassword) => {
+    const user = await User.findById(userId);
+    if (!user) throw new ApiError(404, "User not found");
+
+    const isMatch = await user.isPasswordCorrect(oldPassword);
+    if (!isMatch) throw new ApiError(401, "Incorrect current password");
+
+    user.password = newPassword;
+    await user.save();
+    return true;
+};
+
+const logout = async (userId) => {
+    const user = await User.findById(userId);
+    if (!user) throw new ApiError(404, "User not found");
+
+    user.refreshToken = null;
+    await user.save({ validateBeforeSave: false });
+    return true;
+};
+
+const demoLogin = async (role) => {
+    const validRoles = ["admin", "hr", "employee"];
+    if (!validRoles.includes(role)) {
+        throw new ApiError(400, "Invalid demo role. Use: admin, hr, or employee");
+    }
+
+    const email = `demo@${role}.com`;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+        const randomPassword = `demo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        user = await User.create({
+            fullName: `Demo ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+            email,
+            password: randomPassword,
+            role,
+            isDefaultAdmin: false,
+            avatar: "",
+        });
+    }
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    const accessToken = generateToken(user);
+
+    return { user, accessToken };
+};
+
 module.exports = {
     register,
     login,
     forgotPassword,
     verifyOtp,
     resetPassword,
-    refreshAccessToken
+    refreshAccessToken,
+    updateProfile,
+    changePassword,
+    logout,
+    demoLogin
 };

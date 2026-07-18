@@ -12,7 +12,7 @@ const {
 router.get(
     "/",
     protect,
-    authorize("admin", "inventory"),
+    authorize("admin", "hr", "sales", "employee"),
     getDashboard
 );
 

@@ -33,8 +33,14 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["admin", "hr", "inventory", "employee"],
+      enum: ["admin", "hr", "sales", "employee"],
       default: "employee",
+    },
+
+    isDefaultAdmin: {
+      type: Boolean,
+      default: false,
+      immutable: true,
     },
 
     phone: {

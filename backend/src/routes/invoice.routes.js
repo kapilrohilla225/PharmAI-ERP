@@ -10,7 +10,7 @@ const controller = require("../controllers/invoice.controller");
 
 router.use(protect);
 
-router.use(authorize("admin","hr"));
+router.use(authorize("admin", "sales"));
 
 router.get("/:id", controller.downloadInvoice);
 
