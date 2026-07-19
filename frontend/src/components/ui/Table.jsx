@@ -1,6 +1,6 @@
 const Table = ({ columns, children }) => {
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/70 shadow-xl shadow-black/20 backdrop-blur">
+    <div className="overflow-x-auto rounded-3xl border border-slate-800/80 bg-slate-900/70 shadow-xl shadow-black/20 backdrop-blur">
 
       <table className="w-full">
 

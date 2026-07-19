@@ -118,7 +118,7 @@ const Employees = () => {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/30">
           <Table columns={columns}>
             {loading ? (
               <tr><td colSpan={columns.length} className="py-12 text-center"><Loader size="md" /></td></tr>

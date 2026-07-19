@@ -336,7 +336,7 @@ const Products = () => {
         </div>
 
         {/* Table View */}
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/30">
           <Table
             columns={[
               "Product Code",

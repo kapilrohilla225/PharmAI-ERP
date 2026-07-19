@@ -122,7 +122,7 @@ const HRDashboard = ({ employees, user }) => {
 
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
         <h3 className="mb-5 text-lg font-bold text-white">Recent Employees</h3>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-6 px-6">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-slate-500 text-xs uppercase tracking-wider">

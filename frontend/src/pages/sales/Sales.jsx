@@ -123,7 +123,7 @@ const Sales = () => {
         </div>
 
         {/* Table View */}
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/30">
           <Table columns={columns}>
             {loading ? (
               <tr><td colSpan={columns.length} className="py-8 text-center text-slate-400"><Loader size="md" /></td></tr>

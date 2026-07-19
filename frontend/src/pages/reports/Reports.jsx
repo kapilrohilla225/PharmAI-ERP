@@ -161,7 +161,7 @@ const Reports = () => {
       />
 
       {/* KPI Summary Cards — filtered per role */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {allowedTabs.includes("sales") && (
           <Card className="p-5">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenue</p>

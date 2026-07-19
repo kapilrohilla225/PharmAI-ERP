@@ -172,7 +172,7 @@ const Inventory = () => {
 
         {/* Tabs & Search */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center bg-slate-900/50 p-4 rounded-2xl border border-slate-800/80">
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto">
             {[
               { key: "all", label: "All Alerts" },
               { key: "low", label: "Low Stock" },
@@ -200,7 +200,7 @@ const Inventory = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/30">
           <Table columns={["Code", "Product", "Category", "Stock", "Min Stock", "Expiry", "Status", ...(isAdmin ? ["Actions"] : [])]}>
             {paginated.length === 0 ? (
               <tr><td colSpan={isAdmin ? 8 : 7} className="py-8 text-center text-slate-400">No items found</td></tr>

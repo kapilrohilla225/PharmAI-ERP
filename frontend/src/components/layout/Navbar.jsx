@@ -91,10 +91,10 @@ const Navbar = ({ onMenuClick, onCollapseToggle, isCollapsed }) => {
   ];
 
   return (
-    <header className="z-30 flex shrink-0 h-16 items-center justify-between border-b border-slate-800/80 bg-slate-950/90 px-4 backdrop-blur md:h-20 md:px-8">
+    <header className="z-30 flex shrink-0 h-16 items-center justify-between border-b border-slate-800/80 bg-slate-950/90 px-2 backdrop-blur md:h-20 md:px-8">
 
       {/* ── Left ──────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 md:gap-3">
         <button
           className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
           onClick={onMenuClick}

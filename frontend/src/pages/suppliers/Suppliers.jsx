@@ -259,7 +259,7 @@ const Suppliers = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/30">
           <Table columns={["Code", "Supplier Name", "Contact", "City", "GST", "Status", ...(canWrite ? ["Actions"] : [])]}>
             {loading ? (
               <tr><td colSpan={canWrite ? 7 : 6} className="py-8 text-center"><Loader size="md" /></td></tr>
